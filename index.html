@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSGVO-Checker — Lite</title>
+<style>
+  body{font-family:system-ui,-apple-system,sans-serif;max-width:780px;margin:60px auto;padding:0 20px;color:#222;line-height:1.55}
+  h1{font-size:28px;margin-bottom:6px}
+  p.lead{color:#666;margin-bottom:30px}
+  form{display:flex;gap:8px;margin-bottom:24px}
+  input{flex:1;padding:12px 14px;font-size:15px;border:1px solid #ccc;border-radius:6px}
+  button{padding:12px 22px;background:#222;color:#fff;border:0;border-radius:6px;cursor:pointer;font-weight:600}
+  button:disabled{opacity:.4}
+  .card{background:#f7f7f5;border-radius:8px;padding:20px;margin-top:18px}
+  .issue{padding:12px 0;border-top:1px solid #ddd}
+  .issue:first-child{border-top:0}
+  .sev{display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:.05em}
+  .SICHER{background:#fee;color:#c00}
+  .WAHRSCHEINLICH{background:#fef0d8;color:#a55}
+  .score{float:right;font-size:32px;font-weight:700}
+  .meta{color:#666;font-size:13px;margin-top:4px}
+  .footer{margin-top:50px;color:#888;font-size:13px;text-align:center}
+  .footer a{color:#444}
+</style>
+</head>
+<body>
+  <h1>DSGVO-Checker</h1>
+  <p class="lead">Pattern-basierter Schnell-Check fuer typische Abmahn-Trigger auf deutschen Webseiten. Open-Source, MIT.</p>
+
+  <form id="f" onsubmit="return check(event)">
+    <input id="u" type="url" required placeholder="https://example.de" autocomplete="url">
+    <button id="b" type="submit">Pruefen</button>
+  </form>
+
+  <div id="out"></div>
+
+  <p class="footer">
+    Open-Source auf <a href="https://github.com/your-username/dsgvo-checker">GitHub</a> &middot;
+    Live-Version mit besserem UI: <a href="https://www.webwerk-muc.de/dsgvo-check/">webwerk-muc.de/dsgvo-check</a>
+  </p>
+
+<script>
+async function check(e){
+  e.preventDefault();
+  const u=document.getElementById('u').value;
+  const b=document.getElementById('b');
+  const o=document.getElementById('out');
+  b.disabled=true;b.textContent='Pruefe...';o.innerHTML='';
+  try{
+    const r=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:u})});
+    const d=await r.json();
+    if(!d.ok){o.innerHTML='<div class="card">Fehler: '+(d.error||'?')+'</div>';return false;}
+    let html='<div class="card"><div class="score">'+d.score+'/100</div><h3>'+esc(d.url)+'</h3><p class="meta">'+d.classification+' &middot; '+d.issue_count+' Verstoss/Verstoesse</p>';
+    for(const i of d.issues){
+      html+='<div class="issue"><span class="sev '+i.schweregrad+'">'+i.schweregrad+'</span> <strong>'+esc(i.rule)+'</strong><div class="meta">Grundlage: '+esc(i.rechtsgrundlage)+'<br>Loesung: '+esc(i.fix)+'</div></div>';
+    }
+    if(!d.issues.length) html+='<p>Keine offensichtlichen Verstoesse gefunden.</p>';
+    html+='</div>';
+    o.innerHTML=html;
+  }catch(err){o.innerHTML='<div class="card">Netzwerkfehler</div>';}
+  finally{b.disabled=false;b.textContent='Pruefen';}
+  return false;
+}
+function esc(s){return String(s||'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));}
+</script>
+</body>
+</html>

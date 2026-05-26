@@ -1,0 +1,34 @@
+{
+  "name": "dsgvo-checker",
+  "version": "1.0.0",
+  "description": "Schneller, kostenloser DSGVO/GDPR-Check für Webseiten als Cloudflare Pages Function.",
+  "private": false,
+  "license": "MIT",
+  "author": "Ibrahim Faraj <kontakt@webwerk-muc.de> (https://www.webwerk-muc.de)",
+  "homepage": "https://www.webwerk-muc.de/dsgvo-check/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/dsgvo-checker.git"
+  },
+  "keywords": [
+    "dsgvo",
+    "gdpr",
+    "ttdsg",
+    "compliance",
+    "germany",
+    "datenschutz",
+    "abmahnung",
+    "cloudflare-workers",
+    "cloudflare-pages",
+    "impressum",
+    "cookie-consent"
+  ],
+  "scripts": {
+    "dev": "wrangler pages dev . --port 8788 --compatibility-date=2025-01-01",
+    "deploy": "wrangler pages deploy . --project-name=dsgvo-check",
+    "test": "node tests/run.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
