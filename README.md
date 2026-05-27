@@ -27,7 +27,7 @@ Bestehende Tools sind entweder hinter Mail-Wall, schicken die geprüfte URL an W
 ## Quick Start (Self-Host auf Cloudflare Pages)
 
 ```bash
-git clone https://github.com/<YOUR_USERNAME>/dsgvo-checker.git
+git clone https://github.com/Ibrahimfarajk/dsgvo-checker.git
 cd dsgvo-checker
 npx wrangler pages deploy . --project-name=dsgvo-check
 ```
